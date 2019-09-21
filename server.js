@@ -30,10 +30,21 @@ app.get('/getAllUsers', (req, resp) => {
     UsersModel.find({}, (err, result) => {
         if (err) {
             resp.json({ message: 'error' })
-        } else {
-            resp.send(result)
         }
-    })
+        else {
+            //length of the data in number type
+            var length = result.length;
+            for (let i = 0; i < length; i++) {
+                resp.write("ID: " + result[i]._id + " => Username: " + result[i].username + "\n")
+            }
+            if (err) {
+                resp.json({ message: 'error' })
+            } else {
+                resp.write(result.toString())
+            }
+            resp.end()
+        }
+    }).limit(5)
 })
 
 app.post('/insertMongoose', (req, resp) => {
@@ -58,7 +69,7 @@ app.get("/getUsers", (req, res) => {
         if (err) throw err;
         var dbo = db.db("mydb");
         // Retrive all by classic mongo
-        dbo.collection("users").find({}).toArray((err, result) => {
+        dbo.collection("users").find({}).limit(5).toArray((err, result) => {
             if (err) throw err;
             else {
                 var length = result.length;
